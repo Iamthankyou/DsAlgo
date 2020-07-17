@@ -1,5 +1,7 @@
 package RedBlackTree;
 
+import java.util.Random;
+
 public class RedBlackTree<Key extends Comparable<Key>,Value> {
 	private Node root;
 	
@@ -86,6 +88,143 @@ public class RedBlackTree<Key extends Comparable<Key>,Value> {
 		return root;
 	}
 	
+	public void deleteMin() {
+		if (!isRed(root.getLeft()) && !isRed(root.getRight())) {
+			root.setColor(true);
+		}
+		
+		root = deleteMin(root);
+		
+		if (root!=null) {
+			root.setColor(false);
+		}
+	}
+	
+	public Node deleteMin(Node x) {
+		if (x.getLeft()==null) {
+			return null;
+		}
+		
+		if (!isRed(x.getLeft()) && !isRed(x.getLeft().getLeft())) {
+			x= moveRedLeft(x);
+		}
+		
+		x.setLeft(deleteMin(x.getLeft()));
+		
+		return balance(x);
+	}
+	
+	public Node balance(Node x) {
+		if (!isRed(x.getLeft()) && isRed(x.getRight())) {
+			x = rotateLeft(x);
+		}
+		
+		if (isRed(x.getLeft()) && isRed(x.getLeft().getLeft())) {
+			x = rotateRight(x);
+		}
+		
+		if (isRed(x.getLeft()) && isRed(x.getRight())) {
+			flipColor(x);
+		}
+		
+		x.setN(1+size(x.getLeft())+size(x.getRight()));
+		
+		return x;
+	}
+	
+	public Node moveRedLeft(Node x) {
+		// x.left && x.left.left is black
+		flipColor(x);
+		
+		if (isRed(x.getRight().getLeft())) {
+			System.out.println("moveRedLeft");
+			x.setRight(rotateRight(x.getRight()));
+			x = rotateLeft(x);
+			flipColor(x);
+		}
+		
+		return x;
+	}
+	
+	public Node moveRedRight(Node x) {
+		// x.right && x.right.left is black
+		flipColor(x);
+		
+		if (!isRed(x.getLeft().getLeft())) {
+			x = rotateRight(x);
+		}
+		
+		return x;
+	}
+	
+	public void delete(Key key) {
+		delete(root,key);
+	}
+	
+	public Node delete(Node x, Key key) {
+		if (key.compareTo((Key)x.getKey())<0) {
+			if (!isRed(x.getLeft()) && !isRed(x.getLeft().getLeft())) {
+				x = moveRedLeft(x);
+			}
+			
+			x.setLeft(delete(x.getLeft(),key));
+		}
+		else {
+			if (isRed(x.getLeft())) {
+				x = rotateRight(x);
+			}
+			
+			if (key.compareTo((Key)x.getKey()) == 0 && x.getRight() == null) {
+				return null;
+			}
+			
+			if (!isRed(x.getRight()) && !isRed(x.getRight().getLeft())) {
+				x = moveRedRight(x);
+			}
+			
+			if (key.compareTo((Key)x.getKey()) == 0){
+				// I don't understand
+				x.setVal(get(x.getRight(),(Key) min(x.getRight()).getKey()));
+				x.setKey(min(x.getRight()).getKey());
+				x.setRight(deleteMin(x.getRight()));
+			}
+			else {
+				x.setRight(delete(x.getRight(),key));
+			}
+		}
+		
+		return balance(x);
+	}
+	
+	public Key min() {
+		return (Key) min(root).getKey();
+	}
+	
+	public Node min(Node x) {
+		if (x.getLeft() == null) {
+			return x;
+		}
+		
+		return min(x.getLeft());
+	}
+	
+	public Value get(Node x, Key key) {
+		while (x!=null) {
+			int cmp = key.compareTo((Key)x.getKey());
+			if (cmp<0) {
+				get(x.getLeft(),key);
+			}
+			else if (cmp>0) {
+				get(x.getRight(),key);
+			}
+			else {
+				return (Value) x.getVal();
+			}
+		}
+		
+		return null;
+	}
+	
 	public int size(Node x) {
 		if (x==null) {
 			return 0;
@@ -94,33 +233,54 @@ public class RedBlackTree<Key extends Comparable<Key>,Value> {
 		return x.getN();
 	}
 	
-	public void dfs() {
-		dfs(root);
+	public String dfs() {
+		return dfs(root, new StringBuilder(),"","");
 	}
 	
-	public void dfs(Node root) {
+	public String dfs(Node root, StringBuilder res, String padding, String pointer) {
 		if (root == null) {
-			return;
+			return res.toString();
 		}
 		
-		System.out.print(root.getVal());
+		res.append(padding);
+		res.append(pointer);
+		res.append(root.getVal());
+		res.append("\n");
 		
-		dfs(root.getLeft());
-		dfs(root.getRight());
+		StringBuilder paddingBuilder = new StringBuilder(padding);
+		paddingBuilder.append("|  ");
 		
-		System.out.println();
-		return;
+		String paddingForBoth = paddingBuilder.toString();
+		String pointerToRight = "└──";
+		String pointerToLeft = root.getRight()!=null?"├──" : "└──";
+		
+		dfs(root.getLeft(),res,paddingForBoth,pointerToLeft);
+		dfs(root.getRight(),res,paddingForBoth,pointerToRight);
+		
+//		System.out.println();
+		return res.toString();
 	}
 	
 	public static void main(String args[]) {
 		RedBlackTree<String,String> tree = new RedBlackTree<>();
+		Random random = new Random();
 		
-		tree.put("S","S");
+//		tree.put("A","A");
+		tree.put("C","C");
 		tree.put("E","E");
+		tree.put("H","H");
+		tree.put("L", "L");
+		tree.put("AB", "AB");
+		tree.put("AB", "AB");
 		tree.put("A","A");
-		tree.put("R","R");
-		tree.put("C", "C");
 		
-		tree.dfs();
+		System.out.println(tree.dfs());
+
+		tree.delete("L");
+		System.out.println();
+		
+		System.out.println(tree.dfs());
 	}
+	
+	
 }
