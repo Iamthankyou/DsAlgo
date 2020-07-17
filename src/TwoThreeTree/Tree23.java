@@ -70,7 +70,6 @@ public class Tree23 {
 			}
 		}
 		else if (curr.is3Node()) {
-			System.out.println(val+"??????");
 			if (val < curr.getValLeft()) {
 				if (curr.getLeft() != null) {
 					return search(curr.getLeft(), curr, val);
@@ -81,11 +80,13 @@ public class Tree23 {
 					return res;
 				}
 			} else if (val > curr.getValRight()) {
-				if (curr.getRight() != null) {
-					System.out.println("==>> Val val"+ val + " "+ curr.getValRight());
+				if (curr.getRight() != null && curr.getRight().getValLeft()!=Integer.MIN_VALUE) {
 					return search(curr.getRight(), curr, val);
 				} else {
-					return null;
+					List<Node> res = new ArrayList<>();
+					res.add(curr);
+					res.add(parent);
+					return res;
 				}
 			} else {
 				if (curr.getMiddle() != null) {
@@ -117,8 +118,18 @@ public class Tree23 {
 		}
 		else if (node.is3Node()) {
 			if (node == parent) {
-				System.out.println("===> ok");
+				insertIntoSingle3Node(node,val);
 			}
+		}
+	}
+	
+	public void insertIntoSingle3Node(Node curr, int val) {
+		if (val<curr.getValLeft()) {
+			curr.getLeft().setValLeft(val);
+			curr.getLeft().setValRight(curr.getValRight());
+			
+			curr.getLeft().setRight(curr.getRight());
+//			curr.getLeft().setLeft();
 		}
 	}
 
