@@ -17,7 +17,7 @@ public class DFS {
 	private int V;
 	
 	public void dfs(int u) {
-		System.out.println(u+" ");
+		System.out.print(u+" ");
 		dfsNum.set(u, VISITED);
 		
 		for (IntegerPair v:AL.get(u)) {
@@ -25,6 +25,7 @@ public class DFS {
 				dfs(v.first());
 			}
 		}
+//		System.out.println();
 	}
 	
 	public void buildGraph() {
@@ -53,7 +54,7 @@ public class DFS {
 		
 		for (int u=0; u<V; u++) {
 			if (dfsNum.get(u) == UNVISITED) {
-				System.out.print(++numCC+" ");
+				System.out.print("CC "+ ++numCC+": ");
 				dfs(u);
 				System.out.println();
 			}
