@@ -29,7 +29,7 @@ public class DFS {
 	}
 	
 	public void buildGraph() {
-		try (Scanner sc = new Scanner(new File("/home/duy/DsAlgo/src/Graph/Traversal/input.txt"))){
+		try (Scanner sc = new Scanner(new File(""))){
 			V = sc.nextInt();
 			AL = new ArrayList<>();
 			
