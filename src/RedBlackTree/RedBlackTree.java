@@ -262,21 +262,17 @@ public class RedBlackTree<Key extends Comparable<Key>,Value> {
 	}
 	
 	public static void main(String args[]) {
-		RedBlackTree<String,String> tree = new RedBlackTree<>();
+		RedBlackTree<Integer,Integer> tree = new RedBlackTree<>();
 		Random random = new Random();
 		
 //		tree.put("A","A");
-		tree.put("C","C");
-		tree.put("E","E");
-		tree.put("H","H");
-		tree.put("L", "L");
-		tree.put("AB", "AB");
-		tree.put("AB", "AB");
-		tree.put("A","A");
+		tree.put(6,6);
+		tree.put(17,17);
+		tree.put(14,14);
 		
 		System.out.println(tree.dfs());
 
-		tree.delete("L");
+		tree.delete(14);
 		System.out.println();
 		
 		System.out.println(tree.dfs());
