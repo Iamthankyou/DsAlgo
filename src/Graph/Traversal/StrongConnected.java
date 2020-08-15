@@ -25,7 +25,7 @@ public class StrongConnected {
 	}
 	
 	public void buildGraph() {
-		try (Scanner sc = new Scanner(new File("/home/duy/DsAlgo/src/Graph/Traveral/input.txt"))){
+		try (Scanner sc = new Scanner(new File("/home/duy/DsAlgo/src/Graph/Traversal/input.txt"))){
 			V = sc.nextInt();
 			AL = new ArrayList<>();
 			
@@ -49,9 +49,15 @@ public class StrongConnected {
 		dfsNum = new ArrayList<>(Collections.nCopies(V,0));
 		dfsLow = new ArrayList<>(Collections.nCopies(V,0));
 		visited = new ArrayList<>(Collections.nCopies(V,0));
+		stk = new Stack<>();
 		dfsNumberCounter = 0;
 		numSCC = 0;
 		
+		for (int i=0; i<V; i++) {
+			if (dfsNum.get(i) == UNVISITED) {
+				tarjanSCC(i);
+			}
+		}
 		
 	}
 	
@@ -73,7 +79,7 @@ public class StrongConnected {
 		}
 		
 		if (dfsLow.get(u) == dfsNum.get(u)){ // this is root start of an SCC
-			System.out.print("SCC: "+ (++numSCC)+": ");
+			System.out.print("SCC "+ (++numSCC)+": ");
 
 			while (true) {
 				int v = stk.pop();
@@ -91,44 +97,8 @@ public class StrongConnected {
 	
 	
 	public static void main(String args[]) {
-		ArrayList<IntegerPair> time = new ArrayList<>();
+		StrongConnected scc = new StrongConnected();
 		
-		time.add(new IntegerPair(7,23));
-		time.add(new IntegerPair(8,5));
-		
-		time.add(new IntegerPair(8,48));
-		time.add(new IntegerPair(9,5));
-		
-		time.add(new IntegerPair(9,26));
-		time.add(new IntegerPair(10,48));
-		
-		time.add(new IntegerPair(13,2));
-		time.add(new IntegerPair(17,31));
-		
-		time.add(new IntegerPair(20,3));
-		time.add(new IntegerPair(23,48));
-		
-		int res = 0;
-		
-		for (int i=0; i<time.size(); i+=2) {
-			IntegerPair a = time.get(i);
-			IntegerPair b = time.get(i+1);
-			
-			res += (b.first() - a.first()-1)*60;
-			
-			if (b.second()-a.second()<0) {
-				res+=(b.second()+60-a.second());
-			}
-			else {
-				res+=b.second()-a.second()+1;
-			}
-			
-			System.out.println("From "+a.first()+":"+a.second()+" to "+b.first()+":"+b.second()+": "+res/60+":"+res%60);
-			
-		}
-		
-		String s = new String();
-		
-		System.out.println("Time for us: "+ res/60+":"+res%60);
+		scc.tarjanSCC();
 	}
 }
